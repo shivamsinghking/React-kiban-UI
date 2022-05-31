@@ -1,0 +1,55 @@
+.kanban {
+    display: flex;
+    align-items: flex-start;
+
+    &__section {
+        width: 400px;
+        background-color: #383838;
+        padding: 10px;
+        border-radius: 10px;
+
+        & ~ & {
+            margin-left: 10px;
+        }
+
+        &__title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 10px 0 20px;
+        }
+
+        &__content {
+            & > * ~ * {
+                margin-top: 10px;
+            }
+        }
+    }
+    
+    .add_new_task{
+        font-size: larger;
+        font-weight: bolder;
+        padding: 10px;
+        cursor: pointer;
+    }
+
+    .inputContainer_add_new_task input{
+        font-size: 20px;
+        padding: 10px;
+        border-radius: 5px;
+        border: none;
+    }
+    .btn_container{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .btn_container div{
+        background-color: grey;
+        cursor: pointer;
+        padding: 5px 10px;
+        border-radius: 5px;
+        margin-top: 10px;
+    }
+}
+
