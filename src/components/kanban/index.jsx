@@ -9,6 +9,9 @@ const Kanban = () => {
     const [data, setData] = useState(mockData)
     const [openNewTask, toggleNewTask] = useState(false)
     const [newTask, setTask] = useState('')
+    const [showFilter, setToogleFilter] = useState(false)
+
+    const [filterData, setFilterData] = useState('')
     const onDragEnd = result => {
         if (!result.destination) return
         const { source, destination } = result
@@ -36,85 +39,124 @@ const Kanban = () => {
     const addNewTask = (id, task) => {
         const newData = data
         newData.map((d) => {
-            if(d.id === id){
-                let tasks = [{id: uuidv4(), title: task}, ...d.tasks]
+            if (d.id === id) {
+                let tasks = [{ id: uuidv4(), title: task }, ...d.tasks]
                 d.tasks = tasks
             }
             return true;
         })
 
         setData([...newData])
+        toggleNewTask(false)
     }
 
+    const handleFilterOptions = val => {
+          if(val === false){
+            setFilterData('')
+          }
+          setToogleFilter(val)
+    }
     return (
-        <DragDropContext onDragEnd={onDragEnd}>
-            <div className="kanban">
-                {
-                    data.map(section => (
-                        <>
-                            <Droppable
-                                key={section.id}
-                                droppableId={section.id}
-                            >
-                                {(provided) => (
-                                    <div
-                                        {...provided.droppableProps}
-                                        className='kanban__section'
-                                        ref={provided.innerRef}
+        <div className="container">
+            <div className='left-container'>
+                <DragDropContext onDragEnd={onDragEnd}>
+                    <div className="kanban">
+                        {
+                            data.map(section => (
+                                <>
+                                    <Droppable
+                                        key={section.id}
+                                        droppableId={section.id}
                                     >
-                                        <div className="kanban__section__title">
-                                            {section.title}
-                                        </div>
-                                        <div className="kanban__section__content">
-                                            {
-                                                section.tasks.map((task, index) => {
-                                                    if (!task.addNewOption) {
-                                                        return <Draggable
-                                                            key={task.id}
-                                                            draggableId={task.id}
-                                                            index={index}
-                                                        >
-                                                            {(provided, snapshot) => (
-                                                                <div
-                                                                    ref={provided.innerRef}
-                                                                    {...provided.draggableProps}
-                                                                    {...provided.dragHandleProps}
-                                                                    style={{
-                                                                        ...provided.draggableProps.style,
-                                                                        opacity: snapshot.isDragging ? '0.5' : '1'
-                                                                    }}
-                                                                >
-                                                                    <Card>
-                                                                        {task.title}
-                                                                    </Card>
-                                                                </div>
-                                                            )}
-                                                        </Draggable>
-                                                    } else {
-                                                        return (!openNewTask) 
-                                                        ? <div className="add_new_task" onClick={() => toggleNewTask(true)}> {task.title} </div>
-                                                        : <div className='inputContainer_add_new_task'>
-                                                            <span> Add New Task </span><br />
-                                                            <input type="text" placeholder='Add Your task...' onChange={(e) => setTask(e.target.value)}/>
-                                                            <div className="btn_container">
-                                                              <div onClick={() => addNewTask(section.id, newTask)}> Add </div>
-                                                              <div onClick={() => toggleNewTask(false)}> Close </div>
-                                                            </div>
-                                                        </div>
-                                                    }
+                                        {(provided) => (
+                                            <div
+                                                {...provided.droppableProps}
+                                                className='kanban__section'
+                                                ref={provided.innerRef}
+                                            >
+                                                <div className="kanban__section__title">
+                                                    {section.title}
+                                                </div>
+                                                <div className="kanban__section__content">
+                                                    {
+                                                        section.tasks.map((task, index) => {
 
-                                                })
-                                            }
-                                            {provided.placeholder}
-                                        </div>
-                                    </div>
-                                )}
-                            </Droppable>
-                        </>
-                    ))
-                }
+                                                            if (!task.addNewOption) {
+                                                                // NOTE: filter is active
+                                                                if (task.title.toLowerCase().includes(filterData) === false) return false;
+                                                                return <Draggable
+                                                                    key={task.id}
+                                                                    draggableId={task.id}
+                                                                    index={index}
+                                                                >
+                                                                    {(provided, snapshot) => (
+                                                                        <div
+                                                                            ref={provided.innerRef}
+                                                                            {...provided.draggableProps}
+                                                                            {...provided.dragHandleProps}
+                                                                            style={{
+                                                                                ...provided.draggableProps.style,
+                                                                                opacity: snapshot.isDragging ? '0.5' : '1'
+                                                                            }}
+                                                                        >
+                                                                            <Card>
+                                                                                {task.title}
+                                                                            </Card>
+                                                                        </div>
+                                                                    )}
+                                                                </Draggable>
+                                                            } else {
+                                                                return (!openNewTask)
+                                                                    ? <div className="add_new_task" onClick={() => toggleNewTask(true)}> {task.title} </div>
+                                                                    : <div className='inputContainer_add_new_task'>
+                                                                        <span> Add New Task </span><br />
+                                                                        <input type="text" placeholder='Add Your task...' onChange={(e) => setTask(e.target.value.toLowerCase().trim())} />
+                                                                        <div className="btn_container">
+                                                                            <div onClick={() => addNewTask(section.id, newTask)}> Add </div>
+                                                                            <div onClick={() => toggleNewTask(false)}> Close </div>
+                                                                        </div>
+                                                                    </div>
+                                                            }
+
+                                                        })
+                                                    }
+                                                    {provided.placeholder}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </Droppable>
+                                </>
+                            ))
+                        }
+                    </div>
+                </DragDropContext>
             </div>
-        </DragDropContext>
+            <div className='right-container'>
+                <div className="kaban_board_options">
+                    <div className='kaban_board_filter' onClick={() => setToogleFilter(!showFilter)}>
+                        Filter
+                    </div>
+                    <div>Show Menu</div>
+                </div>
+                {
+                    showFilter &&
+                    <div className='kaban_filter'>
+                        <div className='filter_title'> <span>Filter</span>
+                            <i class="fa fa-times" aria-hidden="true" onClick={() => handleFilterOptions(false)}></i></div><br />
+                        <div className='keyword'>Keyboard</div>
+                        <input type="text" placeholder="Enter a keyword" onChange={(e) => setFilterData(e.target.value)} /><br />
+                        <span className="input_info">Search card, member, labels, and more...</span>
+                        <div>
+                            Comming Soon...
+                        </div>
+                    </div>
+                }
+
+
+
+            </div>
+        </div>
+
     )
 }
 
