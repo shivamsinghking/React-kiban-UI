@@ -37,6 +37,7 @@ const Kanban = () => {
     }
 
     const addNewTask = (id, task) => {
+        if(task === '') return ;
         const newData = data
         newData.map((d) => {
             if (d.id === id) {
@@ -47,6 +48,7 @@ const Kanban = () => {
         })
 
         setData([...newData])
+        setTask('')
         toggleNewTask(false)
     }
 
