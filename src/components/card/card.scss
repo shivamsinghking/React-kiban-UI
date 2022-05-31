@@ -2,4 +2,10 @@
     padding: 30px;
     background-color: #212121;
     border-radius: 10px;
+    .progress_bar{
+        width: 30%;
+        height: 7px;
+        border-radius: 10px;
+        background-color: red;
+    }
 }

@@ -107,8 +107,8 @@ const Kanban = () => {
                                                                 </Draggable>
                                                             } else {
                                                                 return (!openNewTask)
-                                                                    ? <div className="add_new_task" onClick={() => toggleNewTask(true)}> {task.title} </div>
-                                                                    : <div className='inputContainer_add_new_task'>
+                                                                    ? <div className="add_new_task" onClick={() => toggleNewTask(true)} key={task.id}> {task.title} </div>
+                                                                    : <div className='inputContainer_add_new_task' key={task.id}>
                                                                         <span> Add New Task </span><br />
                                                                         <input type="text" placeholder='Add Your task...' onChange={(e) => setTask(e.target.value.toLowerCase().trim())} />
                                                                         <div className="btn_container">
